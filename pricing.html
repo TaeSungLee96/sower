@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sower - 요금제 및 시장 검증</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Config -->
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec92",
+                        "primary-dark": "#0fb873",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#10221a",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2c24",
+                        "text-main": "#111815",
+                        "text-muted": "#618979",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "body": ["Manrope", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem", 
+                        "lg": "0.75rem", 
+                        "xl": "1rem", 
+                        "2xl": "1.5rem"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        /* Hide scrollbar for clean look */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Modal Transition */
+        .modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body class="bg-background-light text-text-main antialiased selection:bg-primary selection:text-text-main">
+<!-- Header (shared component) -->
+<div id="site-header" data-active="pricing"></div>
+<script src="components/header.js"></script>
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<main class="flex-grow">
+<!-- Hero Section -->
+<section class="relative px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+<div class="mx-auto max-w-4xl text-center">
+<h1 class="text-4xl font-extrabold tracking-tight text-text-main sm:text-5xl lg:text-6xl mb-6">
+                        Sower와 함께<br class="sm:hidden"/> 성장을 시작하세요
+                    </h1>
+<p class="mx-auto max-w-2xl text-lg text-text-muted">
+                        투명한 가격, 숨겨진 비용 없음. 언제든지 취소하세요.<br/>
+                        비즈니스 규모에 딱 맞는 플랜을 선택해보세요.
+                    </p>
+<!-- Billing Toggle -->
+<div class="mt-10 flex justify-center">
+<div class="relative flex items-center rounded-full bg-gray-100 p-1">
+<div class="relative flex rounded-full shadow-sm">
+<button id="btn-monthly" class="relative z-10 w-32 rounded-full bg-white py-2 text-sm font-bold text-text-main shadow-sm focus:outline-none transition-all duration-200" type="button" onclick="setBilling('monthly')">
+                                    Monthly
+                                </button>
+<button id="btn-yearly" class="relative z-10 w-32 rounded-full bg-transparent py-2 text-sm font-medium text-text-muted hover:text-text-main focus:outline-none transition-all duration-200" type="button" onclick="setBilling('yearly')">
+                                    Yearly
+                                </button>
+</div>
+<span class="absolute -right-20 -top-6 hidden sm:block">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-gray-400 rotate-90" style="font-size: 32px;">double_arrow</span>
+<span class="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-full whitespace-nowrap">Save 20%</span>
+</span>
+</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Pricing Grid -->
+<section class="px-4 pb-24 sm:px-6 lg:px-8">
+<div class="mx-auto max-w-7xl">
+<div class="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-8">
+<!-- Sprout Plan -->
+<div class="relative flex flex-col rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+<div class="mb-6">
+<h3 class="text-lg font-bold text-text-main">Sprout</h3>
+<p class="text-sm text-text-muted mt-2">개인 프로젝트 및 취미용</p>
+</div>
+<div class="mb-6 flex items-baseline gap-1">
+<span class="text-4xl font-black text-text-main tracking-tight">Free</span>
+</div>
+<button class="mb-8 w-full rounded-xl bg-gray-100 py-3 text-sm font-bold text-text-main transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2" onclick="openModal('Sprout')">
+                                시작하기
+                            </button>
+<ul class="space-y-4 text-sm text-text-muted flex-1">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary shrink-0" style="font-size: 20px;">check_circle</span>
+<span>기본 편집 기능 (Basic Editing)</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary shrink-0" style="font-size: 20px;">check_circle</span>
+<span>1개 워크스페이스</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary shrink-0" style="font-size: 20px;">check_circle</span>
+<span>커뮤니티 지원</span>
+</li>
+</ul>
+</div>
+<!-- Grow Plan (Recommended) -->
+<div class="relative flex flex-col rounded-2xl border-2 border-primary bg-white p-8 shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 scale-105 lg:scale-110 z-10">
+<div class="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-xs font-bold text-text-main shadow-sm">
+                                Recommended
+                            </div>
+<div class="mb-6">
+<h3 class="text-lg font-bold text-text-main">Grow</h3>
+<p class="text-sm text-text-muted mt-2">성장하는 팀과 스타트업용</p>
+</div>
+<div class="mb-6 flex items-baseline gap-1">
+<span id="price-grow" class="text-4xl font-black text-text-main tracking-tight">$29</span>
+<span class="text-base font-medium text-text-muted">/mo</span>
+</div>
+<button class="mb-8 w-full rounded-xl bg-primary py-3 text-sm font-bold text-text-main transition-colors hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 shadow-md" onclick="openModal('Grow')">
+                                구독하기
+                            </button>
+<ul class="space-y-4 text-sm text-text-main flex-1">
+<li class="flex items-start gap-3 font-medium">
+<span class="material-symbols-outlined text-primary shrink-0" style="font-size: 20px;">check_circle</span>
+<span>Sprout의 모든 기능</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary shrink-0" style="font-size: 20px;">check_circle</span>
+<span class="font-bold">AI 리포트 생성 (AI Report Generation)</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary shrink-0" style="font-size: 20px;">check_circle</span>
+<span>커스텀 도메인 연결</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary shrink-0" style="font-size: 20px;">check_circle</span>
+<span>5개 워크스페이스</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary shrink-0" style="font-size: 20px;">check_circle</span>
+<span>우선순위 지원 (Priority Support)</span>
+</li>
+</ul>
+</div>
+<!-- Harvest Plan -->
+<div class="relative flex flex-col rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+<div class="mb-6">
+<h3 class="text-lg font-bold text-text-main">Harvest</h3>
+<p class="text-sm text-text-muted mt-2">대규모 조직 및 엔터프라이즈</p>
+</div>
+<div class="mb-6 flex items-baseline gap-1">
+<span id="price-harvest" class="text-4xl font-black text-text-main tracking-tight">$99</span>
+<span class="text-base font-medium text-text-muted">/mo</span>
+</div>
+<button class="mb-8 w-full rounded-xl bg-gray-100 py-3 text-sm font-bold text-text-main transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2" onclick="openModal('Harvest')">
+                                영업팀 문의
+                            </button>
+<ul class="space-y-4 text-sm text-text-muted flex-1">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary shrink-0" style="font-size: 20px;">check_circle</span>
+<span>Grow의 모든 기능</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary shrink-0" style="font-size: 20px;">check_circle</span>
+<span class="font-bold">계층적 페이지 관리 (Hierarchical Page Management)</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary shrink-0" style="font-size: 20px;">check_circle</span>
+<span>무제한 워크스페이스</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary shrink-0" style="font-size: 20px;">check_circle</span>
+<span>전담 매니저 배정</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary shrink-0" style="font-size: 20px;">check_circle</span>
+<span>API 액세스</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Trusted By Section -->
+<div class="mt-24 border-t border-gray-200 pt-16 text-center">
+<p class="text-sm font-semibold uppercase tracking-wider text-text-muted mb-8">Trusted by innovative teams</p>
+<div class="mx-auto flex max-w-4xl flex-wrap justify-center gap-x-12 gap-y-8 grayscale opacity-60">
+<!-- Using simple text or placeholder SVGs for logos to simulate trust -->
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-3xl">token</span>
+<span class="font-bold text-xl">Acme Corp</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-3xl">diamond</span>
+<span class="font-bold text-xl">GemInit</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-3xl">rocket_launch</span>
+<span class="font-bold text-xl">Boostly</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-3xl">filter_vintage</span>
+<span class="font-bold text-xl">Natura</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="border-t border-gray-200 bg-white py-12">
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-2">
+<div class="text-primary opacity-80">
+<span class="material-symbols-outlined text-2xl">spa</span>
+</div>
+<span class="text-lg font-bold tracking-tight text-text-main">Sower</span>
+</div>
+<p class="text-sm text-text-muted">© 2024 Sower Inc. All rights reserved.</p>
+</div>
+</footer>
+<!-- Fake Door Modal -->
+<div class="modal fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" id="coming-soon-modal">
+<div class="modal-content relative w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
+<!-- Close Button -->
+<button class="absolute right-4 top-4 text-gray-400 hover:text-gray-600 focus:outline-none" onclick="closeModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+<div class="p-8 text-center">
+<div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-4xl">rocket_launch</span>
+</div>
+<h2 class="mb-2 text-2xl font-bold text-text-main">곧 출시될 예정입니다!</h2>
+<p class="mb-6 text-text-muted">
+                        Sower <span class="font-bold text-primary" id="plan-name"></span> 플랜에 관심을 가져주셔서 감사합니다.<br/>
+                        현재 서비스 준비 중이며, 이메일을 남겨주시면<br/>출시 소식을 가장 먼저 전해드립니다.
+                    </p>
+<form class="flex flex-col gap-3" onsubmit="event.preventDefault(); alert('감사합니다! 출시 알림이 등록되었습니다.'); closeModal();">
+<label class="sr-only" for="email">Email address</label>
+<input class="w-full rounded-lg border-gray-300 bg-gray-50 px-4 py-3 text-sm text-text-main placeholder-gray-400 focus:border-primary focus:ring-primary" id="email" name="email" placeholder="name@company.com" required="" type="email"/>
+<button class="w-full rounded-lg bg-primary py-3 text-sm font-bold text-text-main hover:bg-primary-dark transition-colors shadow-sm" type="submit">
+                            출시 알림 받기
+                        </button>
+</form>
+<p class="mt-4 text-xs text-gray-400">
+                        스팸은 보내지 않습니다. 약속합니다.
+                    </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Script for Modal Handling -->
+<script>
+        const modal = document.getElementById('coming-soon-modal');
+        const planNameSpan = document.getElementById('plan-name');
+
+        function openModal(planName) {
+            planNameSpan.textContent = planName;
+            modal.classList.add('active');
+            console.log(`User clicked subscribe on plan: ${planName}`);
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
+        });
+
+        // Billing toggle
+        function setBilling(period) {
+            const btnM = document.getElementById('btn-monthly');
+            const btnY = document.getElementById('btn-yearly');
+            const priceGrow = document.getElementById('price-grow');
+            const priceHarvest = document.getElementById('price-harvest');
+
+            if (period === 'yearly') {
+                btnY.className = 'relative z-10 w-32 rounded-full bg-white py-2 text-sm font-bold text-text-main shadow-sm focus:outline-none transition-all duration-200';
+                btnM.className = 'relative z-10 w-32 rounded-full bg-transparent py-2 text-sm font-medium text-text-muted hover:text-text-main focus:outline-none transition-all duration-200';
+                priceGrow.textContent = '$23';
+                priceHarvest.textContent = '$79';
+            } else {
+                btnM.className = 'relative z-10 w-32 rounded-full bg-white py-2 text-sm font-bold text-text-main shadow-sm focus:outline-none transition-all duration-200';
+                btnY.className = 'relative z-10 w-32 rounded-full bg-transparent py-2 text-sm font-medium text-text-muted hover:text-text-main focus:outline-none transition-all duration-200';
+                priceGrow.textContent = '$29';
+                priceHarvest.textContent = '$99';
+            }
+        }
+    </script>
+</body></html>

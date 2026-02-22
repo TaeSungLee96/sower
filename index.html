@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sower - 데이터로 웹사이트 수확하기</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#51c878",
+                        "primary-dark": "#42a863",
+                        "background-light": "#ffffff",
+                        "background-dark": "#121614",
+                        "surface-light": "#f6f8f7",
+                        "surface-dark": "#1c241f",
+                        "text-main": "#121614",
+                        "text-muted": "#6a8171",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "Noto Sans KR", "sans-serif"],
+                        "body": ["Manrope", "Noto Sans KR", "sans-serif"],
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Manrope', 'Noto Sans KR', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Toast notification */
+        .toast {
+            position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #333; color: #fff; padding: 0.75rem 1.5rem; border-radius: 0.75rem;
+            font-size: 0.875rem; font-weight: 600; z-index: 200;
+            opacity: 0; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+        }
+        .toast.show {
+            opacity: 1; transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-main dark:text-white overflow-x-hidden antialiased">
+<!-- Top Navigation (shared component) -->
+<div id="site-header" data-active="home"></div>
+<script src="components/header.js"></script>
+<main class="flex-auto">
+<!-- Hero Section -->
+<section class="relative overflow-hidden py-20 sm:py-28 lg:py-24 xl:py-28">
+<div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10">
+<div class="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center justify-between">
+<div class="flex flex-col items-center lg:items-start text-center lg:text-left max-w-2xl lg:max-w-none lg:w-[42%] z-10 shrink-0">
+<div class="mb-6 inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-sm font-medium text-primary">
+<span class="mr-2 inline-block h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+                            새로운 웹 빌더의 시대
+                        </div>
+<h1 class="text-4xl font-black tracking-tight text-text-main dark:text-white sm:text-5xl lg:text-6xl xl:text-7xl leading-[1.1]">
+                            당신의 데이터를
+<span class="text-primary relative inline-block">
+                                한 번의 채팅
+                                <svg class="absolute -bottom-2 w-full h-3 text-primary/30" preserveaspectratio="none" viewbox="0 0 100 10">
+<path d="M0 5 Q 50 10 100 5" fill="none" stroke="currentColor" stroke-width="3"></path>
+</svg>
+</span>으로 <br/>
+                            웹사이트로 수확하세요
+                        </h1>
+<p class="mt-6 text-lg lg:text-xl text-text-muted dark:text-gray-400 max-w-xl leading-relaxed">
+                            복잡한 코딩 없이, 엑셀이나 노션 데이터를 연결하면 AI가 분석하여 1초 만에 반응형 웹사이트를 제작해드립니다.<br/>지금 바로 당신의 데이터를 심어보세요.
+                        </p>
+<div class="mt-10 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+<a href="#cta" class="group relative flex items-center justify-center rounded-xl bg-primary px-8 py-4 text-base font-bold text-white transition-all hover:bg-primary-dark hover:shadow-xl hover:shadow-primary/20 w-full sm:w-auto no-underline">
+<span>무료로 시작하기</span>
+<span class="material-symbols-outlined ml-2 transition-transform group-hover:translate-x-1">arrow_forward</span>
+</a>
+<a href="#" onclick="event.preventDefault(); openDemoModal();" class="flex items-center justify-center rounded-xl border border-surface-light dark:border-gray-700 bg-white dark:bg-surface-dark px-8 py-4 text-base font-bold text-text-main dark:text-white transition-all hover:bg-surface-light dark:hover:bg-gray-800 w-full sm:w-auto no-underline">
+<span class="material-symbols-outlined mr-2 text-primary">play_circle</span>
+                                데모 영상 보기
+                            </a>
+</div>
+<div class="mt-8 flex items-center gap-4 text-sm text-text-muted">
+<div class="flex -space-x-2">
+<div class="inline-flex h-8 w-8 items-center justify-center rounded-full ring-2 ring-white dark:ring-background-dark bg-gradient-to-br from-emerald-400 to-teal-500 text-white text-xs font-bold">JY</div>
+<div class="inline-flex h-8 w-8 items-center justify-center rounded-full ring-2 ring-white dark:ring-background-dark bg-gradient-to-br from-violet-400 to-purple-500 text-white text-xs font-bold">MK</div>
+<div class="inline-flex h-8 w-8 items-center justify-center rounded-full ring-2 ring-white dark:ring-background-dark bg-gradient-to-br from-amber-400 to-orange-500 text-white text-xs font-bold">SH</div>
+<div class="inline-flex h-8 w-8 items-center justify-center rounded-full ring-2 ring-white dark:ring-background-dark bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-300 text-[10px] font-bold">+</div>
+</div>
+<p>이미 <span class="font-bold text-text-main dark:text-white">2,000+</span>명의 크리에이터가 대기 중입니다.</p>
+</div>
+</div>
+<style>
+.hero-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+}
+.hero-slide.active { opacity: 1; }
+.hero-dot {
+    width: 8px; height: 8px; border-radius: 9999px;
+    background: rgba(255,255,255,0.35);
+    border: none; cursor: pointer; padding: 0;
+    transition: all 0.3s ease;
+}
+.hero-dot.active {
+    width: 24px;
+    background: var(--color-primary, #16a34a);
+}
+</style>
+<div class="relative mt-16 lg:mt-0 lg:w-[55%] w-full perspective-1000 z-10">
+<!-- Decorative gradient blur -->
+<div class="absolute -top-28 -right-28 h-[500px] w-[500px] rounded-full bg-primary/15 blur-[80px] opacity-60 dark:opacity-20 pointer-events-none"></div>
+<div class="absolute -bottom-20 -left-20 h-[350px] w-[350px] rounded-full bg-blue-400/15 blur-[60px] opacity-60 dark:opacity-20 pointer-events-none"></div>
+<!-- 3D Mockup Container -->
+<div class="relative transform transition-transform hover:scale-[1.02] duration-500 shadow-[0_25px_60px_-12px_rgba(0,0,0,0.15)] rounded-2xl">
+<div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-dark overflow-hidden">
+<!-- Browser Header -->
+<div class="flex items-center border-b border-surface-light dark:border-gray-700 bg-surface-light dark:bg-gray-800 px-4 py-3">
+<div class="flex gap-2">
+<div class="h-3 w-3 rounded-full bg-red-400"></div>
+<div class="h-3 w-3 rounded-full bg-yellow-400"></div>
+<div class="h-3 w-3 rounded-full bg-green-400"></div>
+</div>
+<div class="mx-auto flex w-1/2 items-center justify-center rounded-md bg-white dark:bg-gray-900 px-3 py-1 text-xs text-gray-400 font-mono">
+                                        sower.ai/workspace
+                                    </div>
+</div>
+<!-- Content Slideshow -->
+<div class="relative aspect-[4/3] w-full bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 group overflow-hidden">
+<img class="hero-slide active" src="demo-screens/screen2.png" alt="Login"/>
+<img class="hero-slide" src="demo-screens/screen3.png" alt="Seed"/>
+<img class="hero-slide" src="demo-screens/screen4.png" alt="Soil"/>
+<img class="hero-slide" src="demo-screens/screen6.png" alt="Fruits"/>
+<img class="hero-slide" src="demo-screens/screen5.png" alt="Harvest"/>
+<img class="hero-slide" src="demo-screens/screen1.png" alt="Dashboard"/>
+<!-- Dot Indicators -->
+<div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/40 backdrop-blur-sm rounded-full px-3 py-1.5" style="z-index:25;" id="hero-dots"></div>
+<!-- Floating Overlay Card -->
+<div class="absolute bottom-4 right-4 sm:bottom-8 sm:right-8 max-w-[220px] rounded-xl bg-white/95 backdrop-blur-sm dark:bg-surface-dark/95 p-3.5 shadow-lg border border-primary/20 animate-pulse" style="z-index: 20;">
+<div class="flex items-start gap-2.5">
+<div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-xl">auto_awesome</span>
+</div>
+<div class="text-left">
+<p class="text-xs font-bold text-text-main dark:text-white leading-tight">AI 워크스페이스 연동 완료</p>
+<p class="text-[10px] text-text-muted mt-0.5 leading-snug">데이터 연결부터 퍼블리싱까지 단일 플랫폼에서 완성됩니다.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+(function(){
+  const slides = document.querySelectorAll('.hero-slide');
+  const dotsContainer = document.getElementById('hero-dots');
+  let cur = 0, timer;
+  // Create dots
+  for(let i = 0; i < slides.length; i++){
+    const d = document.createElement('button');
+    d.className = 'hero-dot' + (i===0?' active':'');
+    d.setAttribute('aria-label', 'Slide '+(i+1));
+    d.onclick = () => goTo(i);
+    dotsContainer.appendChild(d);
+  }
+  const dots = dotsContainer.querySelectorAll('.hero-dot');
+  function goTo(idx){
+    slides[cur].classList.remove('active');
+    dots[cur].classList.remove('active');
+    cur = (idx + slides.length) % slides.length;
+    slides[cur].classList.add('active');
+    dots[cur].classList.add('active');
+    resetTimer();
+  }
+  function resetTimer(){ clearInterval(timer); timer = setInterval(()=>goTo(cur+1), 3500); }
+  resetTimer();
+})();
+</script>
+</div>
+</div>
+</div>
+</section>
+<!-- Social Proof -->
+<section class="border-y border-surface-light dark:border-gray-800 bg-surface-light/50 dark:bg-surface-dark/30 py-10">
+<div class="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+<p class="text-sm font-medium text-text-muted mb-6">다양한 플랫폼과 완벽하게 연동됩니다</p>
+<div class="flex flex-wrap items-center justify-center gap-x-12 gap-y-8 opacity-60 grayscale transition-all hover:grayscale-0 hover:opacity-100">
+<div class="flex items-center gap-2 font-bold text-xl text-gray-600 dark:text-gray-300">
+<span class="material-symbols-outlined">table_chart</span> Notion
+                    </div>
+<div class="flex items-center gap-2 font-bold text-xl text-gray-600 dark:text-gray-300">
+<span class="material-symbols-outlined">grid_on</span> Excel
+                    </div>
+<div class="flex items-center gap-2 font-bold text-xl text-gray-600 dark:text-gray-300">
+<span class="material-symbols-outlined">dataset</span> Airtable
+                    </div>
+<div class="flex items-center gap-2 font-bold text-xl text-gray-600 dark:text-gray-300">
+<span class="material-symbols-outlined">description</span> Google Sheets
+                    </div>
+</div>
+</div>
+</section>
+<!-- Process Section (The Seed, Soil, Harvest metaphor) -->
+<section class="py-24 sm:py-32 bg-white dark:bg-background-dark" id="process">
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+<div class="mb-16 max-w-2xl">
+<h2 class="text-3xl font-black tracking-tight text-text-main dark:text-white sm:text-4xl">
+                        데이터가 웹사이트가 되는<br/>
+<span class="text-primary">Sower의 3단계 프로세스</span>
+</h2>
+<p class="mt-4 text-lg text-text-muted">
+                        씨앗을 심고 수확하듯, 데이터만 있으면 누구나 쉽게 웹사이트를 구축할 수 있습니다.
+                    </p>
+</div>
+<div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+<!-- Step 1: Seed -->
+<div class="group relative overflow-hidden rounded-2xl border border-surface-light dark:border-gray-700 bg-white dark:bg-surface-dark p-8 transition-all hover:-translate-y-1 hover:shadow-lg hover:border-primary/50">
+<div class="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-primary/5 transition-all group-hover:bg-primary/10"></div>
+<div class="relative">
+<div class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-3xl">database</span>
+</div>
+<h3 class="mb-3 text-xl font-bold text-text-main dark:text-white">Seed: 모든 데이터 연결</h3>
+<p class="text-text-muted leading-relaxed">
+                                노션, 엑셀, 구글 시트 등 흩어져 있는 기존 데이터를 그대로 연결하세요. 복잡한 마이그레이션 없이 씨앗을 심듯 간편합니다.
+                            </p>
+</div>
+</div>
+<!-- Step 2: Soil -->
+<div class="group relative overflow-hidden rounded-2xl border border-surface-light dark:border-gray-700 bg-white dark:bg-surface-dark p-8 transition-all hover:-translate-y-1 hover:shadow-lg hover:border-primary/50">
+<div class="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-primary/5 transition-all group-hover:bg-primary/10"></div>
+<div class="relative">
+<div class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-3xl">psychology</span>
+</div>
+<h3 class="mb-3 text-xl font-bold text-text-main dark:text-white">Soil: AI 자동 분석</h3>
+<p class="text-text-muted leading-relaxed">
+                                비옥한 토양처럼 AI가 데이터의 구조와 관계를 자동으로 분석하여 최적의 UI/UX 구조를 시각화하고 제안합니다.
+                            </p>
+</div>
+</div>
+<!-- Step 3: Harvest -->
+<div class="group relative overflow-hidden rounded-2xl border border-surface-light dark:border-gray-700 bg-white dark:bg-surface-dark p-8 transition-all hover:-translate-y-1 hover:shadow-lg hover:border-primary/50">
+<div class="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-primary/5 transition-all group-hover:bg-primary/10"></div>
+<div class="relative">
+<div class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-3xl">rocket_launch</span>
+</div>
+<h3 class="mb-3 text-xl font-bold text-text-main dark:text-white">Harvest: 1초 배포</h3>
+<p class="text-text-muted leading-relaxed">
+                                SEO가 완벽하게 최적화된 반응형 웹사이트가 즉시 생성됩니다. 결실을 맺는 순간까지 1초면 충분합니다.
+                            </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Feature Highlight with Image -->
+<section class="py-24 bg-surface-light dark:bg-surface-dark/30" id="features">
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+<div class="flex flex-col lg:flex-row gap-16 items-center">
+<div class="lg:w-1/2 order-2 lg:order-1">
+<div class="relative rounded-2xl overflow-hidden shadow-2xl border border-surface-light dark:border-gray-700">
+<img alt="Data analytics dashboard displayed on a laptop screen" class="w-full h-auto object-cover" data-alt="Laptop screen with charts" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgOedA3WMa6rKMTONhOXY6fBPBItDDGSRjsm-jvrJLGhE7NXQ4gUwB7L9BBsfJM6hFL51hw17GxmmPQP22M1DfCCGhuUf6aB3Ic15n9XlN0PY1RFRLIQgid_XY-Q0U-2OF7PDg643uLIisJbJvtB3-khqI8z-_4SOcYMBLrMjjjsvATMw8BsFFwqVsF1e53skH6xestYdGQ_tHD866iKpiG7ZafNaN6wn40iCPszoIf5ouuqQ7EmFe1YjA4q017VR78uYc1OfMG1I"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-8">
+<div class="text-white">
+<p class="text-sm font-medium opacity-80 mb-1">실시간 미리보기</p>
+<p class="font-bold text-lg">데이터 변경사항이 즉시 반영됩니다.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:w-1/2 order-1 lg:order-2">
+<div class="flex flex-col gap-6">
+<h2 class="text-3xl font-black tracking-tight text-text-main dark:text-white sm:text-4xl">
+                                복잡한 설정은 잊으세요.<br/>
+<span class="text-primary">오직 데이터에만 집중하세요.</span>
+</h2>
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="flex-shrink-0 mt-1">
+<div class="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-sm">check</span>
+</div>
+</div>
+<div>
+<h4 class="font-bold text-text-main dark:text-white text-lg">실시간 데이터 동기화</h4>
+<p class="text-text-muted mt-1">구글 시트를 수정하면 웹사이트도 자동으로 업데이트됩니다. 별도의 배포 과정이 필요 없습니다.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex-shrink-0 mt-1">
+<div class="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-sm">check</span>
+</div>
+</div>
+<div>
+<h4 class="font-bold text-text-main dark:text-white text-lg">커스텀 도메인 연결</h4>
+<p class="text-text-muted mt-1">Sower 기본 도메인뿐만 아니라 보유하고 계신 도메인을 무료로 연결할 수 있습니다.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex-shrink-0 mt-1">
+<div class="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-sm">check</span>
+</div>
+</div>
+<div>
+<h4 class="font-bold text-text-main dark:text-white text-lg">SEO 자동 최적화</h4>
+<p class="text-text-muted mt-1">생성된 모든 페이지는 검색 엔진에 최적화된 메타 태그와 구조화된 데이터를 자동으로 포함합니다.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section with Fake Door Form -->
+<section id="cta" class="relative py-24 sm:py-32 overflow-hidden bg-white dark:bg-background-dark">
+<div class="absolute inset-0 bg-primary/5 skew-y-3 transform origin-top-left scale-110"></div>
+<div class="relative mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+<h2 class="text-4xl font-black tracking-tight text-text-main dark:text-white sm:text-5xl">
+                    지금 바로 무료로 시작해보세요
+                </h2>
+<p class="mx-auto mt-6 max-w-2xl text-lg text-text-muted">
+                    Sower는 현재 비공개 베타 운영 중입니다. <br class="hidden sm:block"/>
+                    이메일을 입력하고 가장 먼저 초대장을 받아보세요.
+                </p>
+<div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+<form class="relative w-full max-w-lg" onsubmit="event.preventDefault(); document.getElementById('success-modal').classList.remove('hidden');">
+<div class="flex flex-col sm:flex-row gap-3 rounded-2xl bg-white dark:bg-surface-dark p-2 shadow-xl shadow-primary/10 border border-gray-200 dark:border-gray-700">
+<input class="flex-1 rounded-xl border-0 bg-gray-50 dark:bg-gray-800 px-5 py-4 text-base text-text-main placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 dark:text-white dark:focus:bg-gray-900 transition-all" placeholder="이메일 주소를 입력하세요" required="" type="email"/>
+<button class="shrink-0 rounded-xl bg-primary px-8 py-4 text-base font-bold text-white shadow-lg shadow-primary/25 transition-all hover:bg-primary-dark hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98]" type="submit">
+                                초대장 신청하기
+                            </button>
+</div>
+<p class="mt-4 text-sm text-text-muted">🔒 카드 등록이 필요하지 않습니다. 언제든 취소 가능합니다.</p>
+</form>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="border-t border-surface-light dark:border-gray-800 bg-white dark:bg-background-dark py-12">
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+<div class="flex flex-col items-center justify-between gap-6 sm:flex-row">
+<div class="flex items-center gap-2">
+<div class="flex size-6 items-center justify-center rounded bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-sm">agriculture</span>
+</div>
+<span class="text-lg font-bold text-text-main dark:text-white">Sower</span>
+</div>
+<div class="flex gap-8 text-sm text-text-muted">
+<a class="hover:text-primary cursor-pointer" onclick="showToast('이용약관 페이지는 준비 중입니다.')">이용약관</a>
+<a class="hover:text-primary cursor-pointer" onclick="showToast('개인정보처리방침 페이지는 준비 중입니다.')">개인정보처리방침</a>
+<a class="hover:text-primary cursor-pointer" onclick="showToast('문의 기능은 준비 중입니다. 이메일을 남겨주세요!')" href="#cta">문의하기</a>
+</div>
+<div class="flex gap-4">
+<a class="text-text-muted hover:text-primary transition-colors cursor-pointer" onclick="showToast('Twitter 페이지는 준비 중입니다.')">
+<span class="sr-only">Twitter</span>
+<svg class="h-5 w-5" fill="currentColor" viewbox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg>
+</a>
+<a class="text-text-muted hover:text-primary transition-colors cursor-pointer" onclick="showToast('GitHub 페이지는 준비 중입니다.')">
+<span class="sr-only">GitHub</span>
+<svg class="h-5 w-5" fill="currentColor" viewbox="0 0 24 24"><path clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" fill-rule="evenodd"></path></svg>
+</a>
+</div>
+</div>
+<div class="mt-8 text-center text-xs text-gray-400">
+                © 2023 Sower Inc. All rights reserved.
+            </div>
+</div>
+</footer>
+<!-- Fake Door / Success Modal -->
+<div aria-labelledby="modal-title" aria-modal="true" class="fixed inset-0 z-[100] hidden overflow-y-auto" id="success-modal" role="dialog">
+<div class="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+<div aria-hidden="true" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="document.getElementById('success-modal').classList.add('hidden');"></div>
+<span aria-hidden="true" class="hidden sm:inline-block sm:h-screen sm:align-middle">​</span>
+<div class="inline-block transform overflow-hidden rounded-2xl bg-white dark:bg-surface-dark px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6 sm:align-middle">
+<div>
+<div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
+<span class="material-symbols-outlined text-primary">check</span>
+</div>
+<div class="mt-3 text-center sm:mt-5">
+<h3 class="text-lg font-bold leading-6 text-text-main dark:text-white" id="modal-title">관심 가져주셔서 감사합니다!</h3>
+<div class="mt-2">
+<p class="text-sm text-text-muted">
+                                현재 Sower는 비공개 베타 기간입니다.<br/>
+                                등록해주신 이메일로 가장 먼저 초대장을 보내드리겠습니다.
+                            </p>
+</div>
+</div>
+</div>
+<div class="mt-5 sm:mt-6">
+<button class="inline-flex w-full justify-center rounded-lg border border-transparent bg-primary px-4 py-2 text-base font-bold text-white shadow-sm hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 sm:text-sm" onclick="document.getElementById('success-modal').classList.add('hidden');" type="button">
+                        확인
+                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Demo Slideshow Modal -->
+<div class="fixed inset-0 z-[100] items-center justify-center bg-black/85 backdrop-blur-md p-4" id="demo-modal" style="display:none;">
+<div class="relative w-full max-w-5xl">
+<button onclick="closeDemoModal()" class="absolute -top-12 right-0 text-white/80 hover:text-white transition-colors flex items-center gap-2 text-sm font-medium z-10">
+<span class="material-symbols-outlined">close</span> 닫기
+</button>
+<!-- Slideshow Container -->
+<div class="relative rounded-2xl overflow-hidden shadow-2xl bg-gray-900">
+  <div id="demo-slides" class="relative" style="aspect-ratio: 5/4;">
+    <img class="demo-slide absolute inset-0 w-full h-full object-contain opacity-100 transition-opacity duration-700" src="demo-screens/screen2.png" alt="로그인"/>
+    <img class="demo-slide absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-700" src="demo-screens/screen3.png" alt="데이터 소스 관리"/>
+    <img class="demo-slide absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-700" src="demo-screens/screen4.png" alt="데이터 처리"/>
+    <img class="demo-slide absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-700" src="demo-screens/screen6.png" alt="페이지 관리"/>
+    <img class="demo-slide absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-700" src="demo-screens/screen5.png" alt="웹 호스팅"/>
+    <img class="demo-slide absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-700" src="demo-screens/screen1.png" alt="대시보드"/>
+  </div>
+  <!-- Prev/Next -->
+  <button onclick="demoNav(-1)" class="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white transition-all">
+    <span class="material-symbols-outlined">chevron_left</span>
+  </button>
+  <button onclick="demoNav(1)" class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white transition-all">
+    <span class="material-symbols-outlined">chevron_right</span>
+  </button>
+</div>
+<!-- Caption + Dots -->
+<div class="flex flex-col items-center mt-5 gap-3">
+  <p id="demo-caption" class="text-white font-semibold text-base">🔐 간편한 소셜 로그인</p>
+  <div id="demo-dots" class="flex gap-2"></div>
+  <p class="text-white/40 text-xs mt-1">Sower 워크스페이스 제품 데모 — Seed · Soil · Fruits · Harvest</p>
+</div>
+</div>
+</div>
+<script>
+(function() {
+  const captions = [
+    '🔐 간편한 소셜 로그인',
+    '🌱 Seed — 데이터 소스 연결 및 관리',
+    '🌿 Soil — AI 자동 데이터 분석 및 처리',
+    '🍎 Fruits — 페이지 및 대시보드 관리',
+    '🌾 Harvest — 웹 호스팅 및 퍼블리싱',
+    '📊 실시간 분석 대시보드 미리보기'
+  ];
+  const slides = document.querySelectorAll('.demo-slide');
+  const captionEl = document.getElementById('demo-caption');
+  const dotsEl = document.getElementById('demo-dots');
+  let current = 0, timer = null;
+
+  // Create dots
+  captions.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'w-2.5 h-2.5 rounded-full transition-all duration-300 ' + (i === 0 ? 'bg-primary w-6' : 'bg-white/30 hover:bg-white/50');
+    dot.onclick = () => goTo(i);
+    dotsEl.appendChild(dot);
+  });
+
+  function goTo(idx) {
+    slides[current].style.opacity = '0';
+    dotsEl.children[current].className = 'w-2.5 h-2.5 rounded-full transition-all duration-300 bg-white/30 hover:bg-white/50';
+    current = (idx + slides.length) % slides.length;
+    slides[current].style.opacity = '1';
+    dotsEl.children[current].className = 'w-2.5 h-2.5 rounded-full transition-all duration-300 bg-primary w-6';
+    captionEl.textContent = captions[current];
+    resetTimer();
+  }
+
+  window.demoNav = function(dir) { goTo(current + dir); };
+
+  function resetTimer() {
+    clearInterval(timer);
+    timer = setInterval(() => goTo(current + 1), 3500);
+  }
+
+  // Modal open/close
+  const modal = document.getElementById('demo-modal');
+  window.openDemoModal = function() {
+    modal.style.display = 'flex';
+    goTo(0);
+  };
+  window.closeDemoModal = function() {
+    modal.style.display = 'none';
+    clearInterval(timer);
+  };
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeDemoModal(); });
+  document.addEventListener('keydown', (e) => {
+    if (modal.style.display === 'flex') {
+      if (e.key === 'Escape') closeDemoModal();
+      if (e.key === 'ArrowRight') demoNav(1);
+      if (e.key === 'ArrowLeft') demoNav(-1);
+    }
+  });
+})();
+</script>
+<!-- Toast Element -->
+<div class="toast" id="toast"></div>
+<script>
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body></html>

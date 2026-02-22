@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sower Demo</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; display: flex; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; }
+  .slideshow { position: relative; width: 960px; max-width: 100vw; }
+  .slide { position: absolute; top: 0; left: 0; width: 100%; opacity: 0; transition: opacity 1.2s ease-in-out; }
+  .slide.active { position: relative; opacity: 1; }
+  .slide img { width: 100%; height: auto; display: block; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .caption { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); color: #fff; padding: 8px 20px;
+    border-radius: 999px; font: 600 14px/1.4 'Manrope', sans-serif; white-space: nowrap; }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="slideshow" id="slideshow">
+  <div class="slide active">
+    <img src="demo-screens/screen2.png" alt="로그인"/>
+    <div class="caption">🔐 간편한 소셜 로그인</div>
+  </div>
+  <div class="slide">
+    <img src="demo-screens/screen3.png" alt="데이터 소스 관리"/>
+    <div class="caption">🌱 Seed — 데이터 소스 연결 및 관리</div>
+  </div>
+  <div class="slide">
+    <img src="demo-screens/screen4.png" alt="데이터 처리"/>
+    <div class="caption">🌿 Soil — AI 자동 데이터 분석 및 처리</div>
+  </div>
+  <div class="slide">
+    <img src="demo-screens/screen6.png" alt="페이지 관리"/>
+    <div class="caption">🍎 Fruits — 페이지 및 대시보드 관리</div>
+  </div>
+  <div class="slide">
+    <img src="demo-screens/screen5.png" alt="웹 호스팅"/>
+    <div class="caption">🌾 Harvest — 웹 호스팅 및 퍼블리싱</div>
+  </div>
+  <div class="slide">
+    <img src="demo-screens/screen1.png" alt="대시보드"/>
+    <div class="caption">📊 실시간 분석 대시보드 미리보기</div>
+  </div>
+</div>
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+  setInterval(() => {
+    slides[current].classList.remove('active');
+    current = (current + 1) % slides.length;
+    slides[current].classList.add('active');
+  }, 3000);
+</script>
+</body>
+</html>
