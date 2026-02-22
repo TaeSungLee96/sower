@@ -348,15 +348,44 @@
                     이메일을 입력하고 가장 먼저 초대장을 받아보세요.
                 </p>
 <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-<form class="relative w-full max-w-lg" onsubmit="event.preventDefault(); document.getElementById('success-modal').classList.remove('hidden');">
+<form class="relative w-full max-w-lg" id="cta-form" onsubmit="handleEmailSubmit(event)">
 <div class="flex flex-col sm:flex-row gap-3 rounded-2xl bg-white dark:bg-surface-dark p-2 shadow-xl shadow-primary/10 border border-gray-200 dark:border-gray-700">
-<input class="flex-1 rounded-xl border-0 bg-gray-50 dark:bg-gray-800 px-5 py-4 text-base text-text-main placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 dark:text-white dark:focus:bg-gray-900 transition-all" placeholder="이메일 주소를 입력하세요" required="" type="email"/>
-<button class="shrink-0 rounded-xl bg-primary px-8 py-4 text-base font-bold text-white shadow-lg shadow-primary/25 transition-all hover:bg-primary-dark hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98]" type="submit">
+<input id="cta-email" class="flex-1 rounded-xl border-0 bg-gray-50 dark:bg-gray-800 px-5 py-4 text-base text-text-main placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 dark:text-white dark:focus:bg-gray-900 transition-all" placeholder="이메일 주소를 입력하세요" required="" type="email"/>
+<button id="cta-submit-btn" class="shrink-0 rounded-xl bg-primary px-8 py-4 text-base font-bold text-white shadow-lg shadow-primary/25 transition-all hover:bg-primary-dark hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98]" type="submit">
                                 초대장 신청하기
                             </button>
 </div>
 <p class="mt-4 text-sm text-text-muted">🔒 카드 등록이 필요하지 않습니다. 언제든 취소 가능합니다.</p>
 </form>
+<script>
+async function handleEmailSubmit(e) {
+  e.preventDefault();
+  const emailInput = document.getElementById('cta-email');
+  const btn = document.getElementById('cta-submit-btn');
+  const email = emailInput.value.trim();
+  if (!email) return;
+
+  // 로딩 상태
+  btn.disabled = true;
+  btn.textContent = '등록 중...';
+
+  try {
+    await fetch('https://script.google.com/macros/s/AKfycbxmR6krP79XmegrKormIdMNpbgSjDv-Udk329XGibVJGduUHZMrif2Y84XF_ovwcgkk/exec', {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({ email }),
+    });
+    // no-cors 모드에서는 응답을 읽을 수 없으므로, 에러가 없으면 성공으로 처리
+    emailInput.value = '';
+    document.getElementById('success-modal').classList.remove('hidden');
+  } catch (err) {
+    showToast('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '초대장 신청하기';
+  }
+}
+</script>
 </div>
 </div>
 </section>
